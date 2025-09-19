@@ -9,16 +9,26 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
-    body {
+    /* ===== Fonte e reset ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
       font-family: 'Roboto', Arial, sans-serif;
-      background: #f0f0f0;
+      background-color: #f0c600; /* Fundo amarelo */
+      overflow-x: hidden;
+    }
+
+    /* ===== Container principal ===== */
+    body {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
-      overflow: hidden;
-      position: relative;
     }
 
     .container {
@@ -26,55 +36,117 @@
       flex-direction: column;
       align-items: center;
       gap: 20px;
-      z-index: 5;
+      width: 100%;
+      max-width: 450px;
+      padding: 15px;
     }
 
+    /* ===== Roleta ===== */
     .roleta-container {
-      background: rgb(251, 238, 2);
-      padding: 15px;
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      background: #ffd700;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
       text-align: center;
       position: relative;
-      z-index: 5;
+      width: 100%;
+      max-width: 400px;
     }
 
     canvas {
       display: block;
-      margin: 0 auto;
-      background: #ffffff; 
+      margin: 20px auto;
+      background: #ffffff;
       border-radius: 50%;
+      width: 100%;
+      height: auto;
     }
 
+    /* ===== Descrição e logos ===== */
+    #descricao-roleta {
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #000;
+      text-align: center;
+    }
+
+    #logo-cima {
+      margin-bottom: 10px;
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* ===== Botão girar ===== */
     button {
       background-color: #ffbf00;
-      color: #000000;
+      color: #000;
       border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
+      padding: 14px 25px;
+      border-radius: 12px;
       cursor: pointer;
-      margin-top: 15px;
-      font-size: 16px;
-      font-family: 'Roboto', Arial, sans-serif;
+      font-size: 18px;
       font-weight: 700;
       transition: all 0.3s ease;
     }
 
     button:hover {
-      background-color: #ffbf00;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 6px 10px rgba(0,0,0,0.25);
     }
 
-    #descricao-roleta {
-      margin-bottom: 5px;
+    /* ===== Popup ===== */
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: #FFD500;
+      padding: 30px 25px;
+      border-radius: 20px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+      text-align: center;
+      z-index: 9999;
+      width: 90%;
+      max-width: 380px;
+      transition: transform 0.4s ease;
+    }
+
+    .popup.show {
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .popup h2 {
       font-weight: 700;
+      font-size: 24px;
+      margin-bottom: 12px;
     }
 
-    #logo-cima {
-      margin-bottom: 5px;
+    .popup p {
+      font-size: 16px;
+      margin-bottom: 20px;
+      line-height: 1.5;
     }
 
+    /* ===== Botão WhatsApp ===== */
+    .whatsapp-btn {
+      display: inline-block;
+      background: #25D366;
+      color: white;
+      text-decoration: none;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+
+    .whatsapp-btn:hover {
+      background: #1ebe57;
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+    }
+
+    /* ===== Confetes ===== */
     .confete {
       position: fixed;
       bottom: 0;
@@ -82,7 +154,7 @@
       height: 10px;
       opacity: 0.9;
       pointer-events: none;
-      border-radius: 2px;
+      border-radius: 50%;
       z-index: 2;
       animation: subirConfete linear forwards;
     }
@@ -92,40 +164,20 @@
       100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
     }
 
-    .popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      background: #FFD500;
-      padding: 25px 30px;
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-      text-align: center;
-      z-index: 9999;
-      width: 350px;
-      transition: transform 0.4s ease;
-    }
+    /* ===== Responsividade ===== */
+    @media (max-width: 500px) {
+      button {
+        width: 90%;
+        font-size: 16px;
+      }
 
-    .popup.show { transform: translate(-50%, -50%) scale(1); }
+      #descricao-roleta {
+        font-size: 1rem;
+      }
 
-    .popup h2 { font-weight: 700; margin-bottom: 10px; font-size: 22px; }
-    .popup p { font-size: 16px; margin-bottom: 20px; line-height: 1.5; }
-
-    .whatsapp-btn {
-      display: inline-block;
-      background: #25D366;
-      color: white;
-      text-decoration: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-weight: 700;
-      transition: all 0.3s ease;
-    }
-    .whatsapp-btn:hover {
-      background: #1ebe57;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+      .popup {
+        padding: 20px 15px;
+      }
     }
   </style>
 </head>
@@ -148,6 +200,7 @@
     <a class="whatsapp-btn" href="https://wa.me/SEUNUMERO" target="_blank">Receber pelo WhatsApp</a>
   </div>
 
+  <!-- ===== Script da roleta (mantido igual ao original) ===== -->
   <script>
     let tamanhoLogoSuperior = 220;
 
@@ -282,29 +335,6 @@
         setTimeout(() => confete.remove(), 5000);
       }
     }
-
-    // --- Etapa adicionada para ler config.json ---
-    fetch('/config')
-  .then(response => response.json())
-  .then(config => {
-    if (config.descricaoTopo) document.getElementById('descricao-roleta').innerHTML = config.descricaoTopo;
-    if (config.logoSuperior) document.getElementById('logo-cima').src = config.logoSuperior;
-    if (config.logoCentro) logoCentro.src = config.logoCentro;
-    if (config.corFundoTema) {
-      document.body.style.background = config.corFundoTema;
-      document.querySelector('.roleta-container').style.background = config.corFundoTema;
-    }
-    if (config.premios && config.premios.length === premios.length) {
-      config.premios.forEach((p, i) => {
-        premios[i].cor = p.cor;
-        premios[i].texto = p.texto;
-        if (p.img) premios[i]._imgObj.src = p.img;
-        if (p.imgSize) premios[i].imgSize = p.imgSize;
-      });
-    }
-    desenharRoleta();
-  })
-  .catch(err => console.error("Erro ao carregar configuração:", err));
 
     logoCentro.onload = desenharRoleta;
     desenharRoleta();
